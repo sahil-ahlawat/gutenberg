@@ -76,10 +76,7 @@ function TypesetButton() {
 					<Subtitle level={ 3 }>{ __( 'Typeset' ) }</Subtitle>
 				</HStack>
 				<ItemGroup isBordered isSeparated>
-					<NavigationButtonAsItem
-						path="/typography/typeset"
-						aria-label={ __( 'Typeset' ) }
-					>
+					<NavigationButtonAsItem path="/typography/typeset">
 						<HStack direction="row">
 							<FlexItem>{ title }</FlexItem>
 							<Icon
