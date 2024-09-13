@@ -63,6 +63,7 @@ export function normalizeFields< Item >(
 			Edit,
 			enableHiding: field.enableHiding ?? true,
 			enableSorting: field.enableSorting ?? true,
+			isMediaField: field.isMediaField ?? false,
 		};
 	} );
 }
