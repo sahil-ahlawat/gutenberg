@@ -29,7 +29,7 @@ test.describe( 'Allowed Patterns', () => {
 				name: 'Block Library',
 			} )
 			.getByRole( 'searchbox', {
-				name: 'Search for blocks and patterns',
+				name: 'Search',
 			} )
 			.fill( 'Test:' );
 
@@ -72,7 +72,7 @@ test.describe( 'Allowed Patterns', () => {
 					name: 'Block Library',
 				} )
 				.getByRole( 'searchbox', {
-					name: 'Search for blocks and patterns',
+					name: 'Search',
 				} )
 				.fill( 'Test:' );
 
