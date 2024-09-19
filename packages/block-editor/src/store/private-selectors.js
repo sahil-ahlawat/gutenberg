@@ -631,6 +631,20 @@ export function getPatternBlockEditingMode( state, clientId ) {
 		return 'disabled';
 	}
 
+	// Make the outer pattern block content only mode.
+	if (
+		getBlockName( state, clientId ) === 'core/block' &&
+		parentPatternCount === 0
+	) {
+		return 'contentOnly';
+	}
+
+	// Disable pattern content in zoom-out mode.
+	const isZoomOut = isZoomOutMode( state );
+	if ( isZoomOut ) {
+		return 'disabled';
+	}
+
 	// If the block has a binding of any kind, allow content only editing.
 	const attributes = getBlockAttributes( state, clientId );
 	if ( Object.keys( attributes.metadata?.bindings ?? {} )?.length > 0 ) {

@@ -201,7 +201,6 @@ function ReusableBlockEdit( {
 	} );
 
 	const innerBlocksProps = useInnerBlocksProps( blockProps, {
-		templateLock: 'all',
 		layout,
 		value: blocks,
 		onInput: NOOP,
