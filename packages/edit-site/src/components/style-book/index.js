@@ -31,7 +31,10 @@ import { ENTER, SPACE } from '@wordpress/keycodes';
 import { unlock } from '../../lock-unlock';
 import EditorCanvasContainer from '../editor-canvas-container';
 import { STYLE_BOOK_CATEGORIES, STYLE_BOOK_IFRAME_STYLES } from './constants';
-import { getCategoryExamples } from './categories';
+import {
+	getCategoryExamples,
+	getTopLevelStyleBookCategories,
+} from './categories';
 import { getExamples } from './examples';
 
 const {
@@ -64,7 +67,7 @@ function StyleBook( {
 	const [ examples ] = useState( getExamples );
 	const tabs = useMemo(
 		() =>
-			STYLE_BOOK_CATEGORIES.filter( ( category ) =>
+			getTopLevelStyleBookCategories().filter( ( category ) =>
 				examples.some(
 					( example ) => example.category === category.slug
 				)

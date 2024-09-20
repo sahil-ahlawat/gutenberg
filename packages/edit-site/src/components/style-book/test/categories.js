@@ -1,8 +1,35 @@
 /**
  * Internal dependencies
  */
-import { getCategoryExamples } from '../categories';
+import {
+	getCategoryExamples,
+	getTopLevelStyleBookCategories,
+} from '../categories';
 import { STYLE_BOOK_CATEGORIES } from '../constants';
+
+jest.mock( '@wordpress/blocks', () => {
+	return {
+		getCategories() {
+			return [
+				{
+					slug: 'text',
+					title: 'Text Registered',
+					icon: 'text',
+				},
+				{
+					slug: 'design',
+					title: 'Design Registered',
+					icon: 'design',
+				},
+				{
+					slug: 'funky',
+					title: 'Funky',
+					icon: 'funky',
+				},
+			];
+		},
+	};
+} );
 
 // Fixtures
 const exampleThemeBlocks = [
@@ -59,6 +86,19 @@ const exampleThemeBlocks = [
 ];
 
 describe( 'utils', () => {
+	describe( 'getTopLevelStyleBookCategories', () => {
+		it( 'returns theme subcategories examples', () => {
+			expect( getTopLevelStyleBookCategories() ).toEqual( [
+				...STYLE_BOOK_CATEGORIES,
+				{
+					name: 'funky',
+					title: 'Funky',
+					icon: 'funky',
+				},
+			] );
+		} );
+	} );
+
 	describe( 'getCategoryExamples', () => {
 		it( 'returns theme subcategories examples', () => {
 			const themeCategory = STYLE_BOOK_CATEGORIES.find(
