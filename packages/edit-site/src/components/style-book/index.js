@@ -30,7 +30,7 @@ import { ENTER, SPACE } from '@wordpress/keycodes';
  */
 import { unlock } from '../../lock-unlock';
 import EditorCanvasContainer from '../editor-canvas-container';
-import { STYLE_BOOK_CATEGORIES, STYLE_BOOK_IFRAME_STYLES } from './constants';
+import { STYLE_BOOK_IFRAME_STYLES } from './constants';
 import {
 	getCategoryExamples,
 	getTopLevelStyleBookCategories,
@@ -248,7 +248,7 @@ const StyleBookBody = ( {
 
 const Examples = memo(
 	( { className, examples, category, label, isSelected, onSelect } ) => {
-		const categoryDefinition = STYLE_BOOK_CATEGORIES.find(
+		const categoryDefinition = getTopLevelStyleBookCategories().find(
 			( _category ) => _category.slug === category
 		);
 		const filteredExamples = getCategoryExamples(
@@ -263,7 +263,7 @@ const Examples = memo(
 				aria-label={ label }
 				role="grid"
 			>
-				{ !! filteredExamples.examples?.length &&
+				{ !! filteredExamples?.examples?.length &&
 					filteredExamples.examples.map( ( example ) => (
 						<Example
 							key={ example.name }
