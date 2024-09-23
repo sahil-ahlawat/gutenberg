@@ -3,10 +3,10 @@
  *
  * @typedef {Object} StyleBookCategory
  *
- * @property {string} slug     Object with named attributes.
- * @property {string} title    Object with named attributes.
- * @property {Array?} blocks   Object with named attributes.
- * @property {Array?} excludes Array with numeric attributes.
+ * @property {string} slug     Category identifier.
+ * @property {string} title    Category title/label.
+ * @property {Array?} blocks   Array of block names to include in the category. Used when blocks are not included in the category by default.
+ * @property {Array?} excludes Array of blocks to exclude from the category. Used when blocks are included in the category by default.
  */
 
 /**
@@ -25,10 +25,10 @@
  *
  * @typedef {Object} CategoryExamples
  *
- * @property {string}                   slug          Slug of the category.
- * @property {string}                   title         Title of the category for the UI.
- * @property {Array<blockExamples>?}    examples      Object with named attributes.
- * @property {Array<CategoryExamples>?} subcategories Array with numeric attributes.
+ * @property {string}                   slug          Category identifier.
+ * @property {string}                   title         Category title/label.
+ * @property {Array<blockExamples>?}    examples      Array of block examples.
+ * @property {Array<CategoryExamples>?} subcategories Array of subcategory examples.
  */
 
 /**
