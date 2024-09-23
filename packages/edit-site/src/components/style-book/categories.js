@@ -1,4 +1,17 @@
 /**
+ * WordPress dependencies
+ */
+import { getCategories } from '@wordpress/blocks';
+
+/**
+ * Internal dependencies
+ */
+import {
+	STYLE_BOOK_CATEGORIES,
+	STYLE_BOOK_THEME_SUBCATEGORIES,
+} from './constants';
+
+/**
  * categoryDefinition object.
  *
  * @typedef {Object} StyleBookCategory
@@ -84,4 +97,20 @@ export function getCategoryExamples( categoryDefinition, examples ) {
 		slug: categoryDefinition.slug,
 		examples: categoryExamples,
 	};
+}
+
+/**
+ * Returns category examples for a given category definition and list of examples.
+ *
+ * @return {Array<StyleBookCategory>} An array of top-level category definitions.
+ */
+export function getTopLevelStyleBookCategories() {
+	const reservedCategories = [
+		...STYLE_BOOK_THEME_SUBCATEGORIES,
+		...STYLE_BOOK_CATEGORIES,
+	].map( ( { slug } ) => slug );
+	const extraCategories = getCategories().filter(
+		( { slug } ) => ! reservedCategories.includes( slug )
+	);
+	return [ ...STYLE_BOOK_CATEGORIES, ...extraCategories ];
 }

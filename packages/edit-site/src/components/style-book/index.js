@@ -153,7 +153,7 @@ function StyleBook( {
 					</div>
 				) : (
 					<StyleBookBody
-						category={ tabs[ 0 ].name }
+						category={ tabs[ 0 ].slug }
 						examples={ examples }
 						isSelected={ isSelected }
 						onClick={ onClick }
