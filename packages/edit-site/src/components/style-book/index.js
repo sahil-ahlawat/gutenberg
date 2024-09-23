@@ -66,7 +66,7 @@ function StyleBook( {
 		() =>
 			STYLE_BOOK_CATEGORIES.filter( ( category ) =>
 				examples.some(
-					( example ) => example.category === category.name
+					( example ) => example.category === category.slug
 				)
 			),
 		[ examples ]
@@ -122,8 +122,8 @@ function StyleBook( {
 							<Tabs.TabList>
 								{ tabs.map( ( tab ) => (
 									<Tabs.Tab
-										tabId={ tab.name }
-										key={ tab.name }
+										tabId={ tab.slug }
+										key={ tab.slug }
 									>
 										{ tab.title }
 									</Tabs.Tab>
@@ -131,12 +131,12 @@ function StyleBook( {
 							</Tabs.TabList>
 							{ tabs.map( ( tab ) => (
 								<Tabs.TabPanel
-									key={ tab.name }
-									tabId={ tab.name }
+									key={ tab.slug }
+									tabId={ tab.slug }
 									focusable={ false }
 								>
 									<StyleBookBody
-										category={ tab.name }
+										category={ tab.slug }
 										examples={ examples }
 										isSelected={ isSelected }
 										onSelect={ onSelect }
@@ -246,7 +246,7 @@ const StyleBookBody = ( {
 const Examples = memo(
 	( { className, examples, category, label, isSelected, onSelect } ) => {
 		const categoryDefinition = STYLE_BOOK_CATEGORIES.find(
-			( c ) => c.name === category
+			( _category ) => _category.slug === category
 		);
 		const filteredExamples = getCategoryExamples(
 			categoryDefinition,
@@ -277,7 +277,7 @@ const Examples = memo(
 					filteredExamples.subcategories.map( ( subcategory ) => (
 						<Composite.Group
 							className="edit-site-style-book__subcategory"
-							key={ `subcategory-${ subcategory.name }` }
+							key={ `subcategory-${ subcategory.slug }` }
 						>
 							<Composite.GroupLabel>
 								<h2 className="edit-site-style-book__subcategory-title">
