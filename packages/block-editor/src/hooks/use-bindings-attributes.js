@@ -104,52 +104,65 @@ export const withBlockBindingSupport = createHigherOrderComponent(
 			unlock( select( blocksStore ) ).getAllBlockBindingsSources()
 		);
 		const { name, clientId, context, setAttributes } = props;
-		const blockBindings = useMemo(
-			() =>
-				replacePatternOverrideDefaultBindings(
+		const { blockBindings, blockBindingsBySource, updatedContext } =
+			useMemo( () => {
+				const _blockBindings = replacePatternOverrideDefaultBindings(
 					name,
 					props.attributes.metadata?.bindings
-				),
-			[ props.attributes.metadata?.bindings, name ]
-		);
+				);
+				const _updatedContext = { ...context };
+
+				if ( ! _blockBindings ) {
+					return { updatedContext: _updatedContext };
+				}
+
+				const _blockBindingsBySource = new Map();
+
+				for ( const [ attributeName, binding ] of Object.entries(
+					_blockBindings
+				) ) {
+					const { source: sourceName, args: sourceArgs } = binding;
+					const source = sources[ sourceName ];
+					if (
+						! source ||
+						! canBindAttribute( name, attributeName )
+					) {
+						continue;
+					}
+
+					// Populate context.
+					for ( const key of source.usesContext || [] ) {
+						_updatedContext[ key ] = blockContext[ key ];
+					}
+
+					_blockBindingsBySource.set( source, {
+						..._blockBindingsBySource.get( source ),
+						[ attributeName ]: {
+							args: sourceArgs,
+						},
+					} );
+				}
+
+				return {
+					blockBindings: _blockBindings,
+					updatedContext: _updatedContext,
+					blockBindingsBySource: _blockBindingsBySource,
+				};
+			}, [
+				props.attributes.metadata?.bindings,
+				name,
+				context,
+				blockContext,
+				sources,
+			] );
 
 		// While this hook doesn't directly call any selectors, `useSelect` is
 		// used purposely here to ensure `boundAttributes` is updated whenever
 		// there are attribute updates.
 		// `source.getValues` may also call a selector via `registry.select`.
-		const updatedContext = { ...context };
 		const boundAttributes = useSelect( () => {
-			if ( ! blockBindings ) {
-				return;
-			}
-
 			const attributes = {};
-
-			const blockBindingsBySource = new Map();
-
-			for ( const [ attributeName, binding ] of Object.entries(
-				blockBindings
-			) ) {
-				const { source: sourceName, args: sourceArgs } = binding;
-				const source = sources[ sourceName ];
-				if ( ! source || ! canBindAttribute( name, attributeName ) ) {
-					continue;
-				}
-
-				// Populate context.
-				for ( const key of source.usesContext || [] ) {
-					updatedContext[ key ] = blockContext[ key ];
-				}
-
-				blockBindingsBySource.set( source, {
-					...blockBindingsBySource.get( source ),
-					[ attributeName ]: {
-						args: sourceArgs,
-					},
-				} );
-			}
-
-			if ( blockBindingsBySource.size ) {
+			if ( blockBindingsBySource?.size ) {
 				for ( const [ source, bindings ] of blockBindingsBySource ) {
 					// Get values in batch if the source supports it.
 					let values = {};
@@ -183,14 +196,7 @@ export const withBlockBindingSupport = createHigherOrderComponent(
 			}
 
 			return attributes;
-		}, [
-			blockBindings,
-			name,
-			clientId,
-			updatedContext,
-			registry,
-			sources,
-		] );
+		}, [ blockBindingsBySource, clientId, updatedContext, registry ] );
 
 		const hasParentPattern = !! updatedContext[ 'pattern/overrides' ];
 		const hasPatternOverridesDefaultBinding =
@@ -206,7 +212,6 @@ export const withBlockBindingSupport = createHigherOrderComponent(
 					}
 
 					const keptAttributes = { ...nextAttributes };
-					const blockBindingsBySource = new Map();
 
 					// Loop only over the updated attributes to avoid modifying the bound ones that haven't changed.
 					for ( const [ attributeName, newValue ] of Object.entries(
@@ -224,17 +229,20 @@ export const withBlockBindingSupport = createHigherOrderComponent(
 						if ( ! source?.setValues ) {
 							continue;
 						}
+						// Add the new value to the existing source bindings.
 						blockBindingsBySource.set( source, {
 							...blockBindingsBySource.get( source ),
 							[ attributeName ]: {
-								args: binding.args,
+								...blockBindingsBySource.get( source )?.[
+									attributeName
+								],
 								newValue,
 							},
 						} );
 						delete keptAttributes[ attributeName ];
 					}
 
-					if ( blockBindingsBySource.size ) {
+					if ( blockBindingsBySource?.size ) {
 						for ( const [
 							source,
 							bindings,
@@ -269,6 +277,7 @@ export const withBlockBindingSupport = createHigherOrderComponent(
 			[
 				registry,
 				blockBindings,
+				blockBindingsBySource,
 				name,
 				clientId,
 				updatedContext,
