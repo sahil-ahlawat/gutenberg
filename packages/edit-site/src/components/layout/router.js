@@ -27,6 +27,8 @@ import {
 	TEMPLATE_POST_TYPE,
 } from '../../utils/constants';
 import { PostEdit } from '../post-edit';
+import GlobalStylesUI from '../global-styles/ui';
+import Page from '../page';
 
 const { useLocation, useHistory } = unlock( routerPrivateApis );
 
@@ -155,8 +157,16 @@ export default function useLayoutAreas() {
 				sidebar: (
 					<SidebarNavigationScreenGlobalStyles backPath={ {} } />
 				),
+				content: (
+					<Page className="edit-site-styes" title={ __( 'Styles' ) }>
+						<GlobalStylesUI />
+					</Page>
+				),
 				preview: <Editor />,
 				mobile: hasEditCanvasMode && <Editor />,
+			},
+			widths: {
+				content: 380,
 			},
 		};
 	}
