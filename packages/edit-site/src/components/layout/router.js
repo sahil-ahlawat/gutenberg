@@ -163,7 +163,13 @@ export default function useLayoutAreas() {
 					</Page>
 				),
 				preview: <Editor />,
-				mobile: hasEditCanvasMode && <Editor />,
+				mobile: hasEditCanvasMode ? (
+					<Editor />
+				) : (
+					<Page className="edit-site-styes" title={ __( 'Styles' ) }>
+						<GlobalStylesUI />
+					</Page>
+				),
 			},
 			widths: {
 				content: 380,

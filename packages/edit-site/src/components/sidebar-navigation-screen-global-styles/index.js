@@ -116,7 +116,7 @@ export default function SidebarNavigationScreenGlobalStyles( { backPath } ) {
 					)
 				}
 			/>
-			{ ! isMobileViewport && isViewMode && (
+			{ isViewMode && (
 				<StyleBook
 					enableResizing={ false }
 					isSelected={ () => false }
