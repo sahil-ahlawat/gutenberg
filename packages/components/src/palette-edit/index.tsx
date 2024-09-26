@@ -59,13 +59,14 @@ import type {
 
 const DEFAULT_COLOR = '#000';
 
-function NameInput( { value, onChange, label }: NameInputProps ) {
+function NameInput( { value, onChange, label, className }: NameInputProps ) {
 	return (
 		<NameInputControl
 			label={ label }
 			hideLabelFromVision
 			value={ value }
 			onChange={ onChange }
+			className={ className }
 		/>
 	);
 }
@@ -175,6 +176,7 @@ function Option< T extends Color | Gradient >( {
 	popoverProps: receivedPopoverProps,
 	slugPrefix,
 	isGradient,
+	isDuplicate,
 }: OptionProps< T > ) {
 	const value = isGradient ? element.gradient : element.color;
 	const [ isEditingColor, setIsEditingColor ] = useState( false );
@@ -210,6 +212,10 @@ function Option< T extends Color | Gradient >( {
 				<FlexItem>
 					{ ! canOnlyChangeValues ? (
 						<NameInput
+							className={ clsx(
+								'components-palette-edit__name-input',
+								{ 'is-duplicate': isDuplicate }
+							) }
 							label={
 								isGradient
 									? __( 'Gradient name' )
@@ -281,7 +287,13 @@ function PaletteEditListView< T extends Color | Gradient >( {
 	}, [ elements ] );
 
 	const debounceOnChange = useDebounce( onChange, 100 );
-
+	const isDuplicate = useCallback(
+		( optionElement: PaletteElement ) =>
+			elements.filter(
+				( element ) => element.slug === optionElement.slug
+			).length > 1,
+		[ elements ]
+	);
 	return (
 		<VStack spacing={ 3 }>
 			<ItemGroup isRounded>
@@ -291,6 +303,7 @@ function PaletteEditListView< T extends Color | Gradient >( {
 						canOnlyChangeValues={ canOnlyChangeValues }
 						key={ index }
 						element={ element }
+						isDuplicate={ isDuplicate( element ) }
 						onChange={ ( newElement ) => {
 							debounceOnChange(
 								elements.map(
@@ -606,16 +619,22 @@ export function PaletteEdit( {
 								disableCustomColors
 							/>
 						) ) }
-					{ ! isEditing && duplicateSlugs?.length > 0 && (
-						<p>
-							One of more of your colors have the same name. To
-							ensure your styles do not conflict, make sure they
-							have unique names.{ ' ' }
-							<button onClick={ () => setIsEditing( true ) }>
-								{ __( 'Edit colors now' ) }
-							</button>
-						</p>
-					) }
+					{ ! canOnlyChangeValues &&
+						! isEditing &&
+						duplicateSlugs?.length > 0 && (
+							<div className="components-palette-edit__warning">
+								Some items in this palette have identical names.
+								To prevent styles conflicts, give each item a
+								unique name.
+								<Button
+									className="components-palette-edit__edit_palette_button"
+									variant="link"
+									onClick={ () => setIsEditing( true ) }
+								>
+									{ __( 'Edit this palette.' ) }
+								</Button>
+							</div>
+						) }
 				</PaletteEditContents>
 			) }
 			{ ! hasElements && emptyMessage && (
